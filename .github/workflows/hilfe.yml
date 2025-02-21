@@ -1,0 +1,12 @@
+name: Tag - Hilfe
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - dist/hilfe/**
+jobs:
+  call-reusable:
+    uses: ./.github/workflows/_tag_release.yml
+    with:
+      tag_prefix: "ext/hilfe/v"

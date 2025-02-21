@@ -1,0 +1,12 @@
+name: Tag - Assign users
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - dist/assign_users/**
+jobs:
+  call-reusable:
+    uses: ./.github/workflows/_tag_release.yml
+    with:
+      tag_prefix: "ext/assign_users/v"
