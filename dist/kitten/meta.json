@@ -1,4 +1,15 @@
 {
-    "name": "Fetch kitten",
-    "description": "Gets a random cute kitten from cataas."
+  "events": ["invocation.manual"],
+  "config": {
+    "code": { "import": "code.js" },
+    "runtime": "nodejs22.x"
+  },
+  "token_lifetime_s": null,
+  "description": "Gets a random cute kitten from cataas.",
+  "name": "Fetch kitten",
+  "type": "function",
+  "extension_source": "custom_store",
+  "guide": "",
+  "extension_image_url": "https://surypavel.github.io/r8store/static/kittens.webp",
+  "store_description": "Gets a random cute kitten from cataas."
 }
