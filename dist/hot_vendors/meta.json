@@ -1,4 +1,15 @@
 {
+    "events": ["invocation.manual"],
+    "config": {
+      "code_source": "code.js",
+      "runtime": "nodejs22.x"
+    },
+    "description": "Determines temperature at vendors location.",
     "name": "Check temperature",
-    "description": "Determines temperature at vendors location."
-}
+    "type": "function",
+    "extension_source": "custom_store",
+    "guide": "",
+    "extension_image_url": "https://surypavel.github.io/r8store/static/thermo.webp",
+    "store_description": "Determines temperature at vendors location."
+  }
+  
