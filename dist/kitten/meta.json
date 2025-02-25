@@ -1,7 +1,7 @@
 {
   "events": ["invocation.manual"],
   "config": {
-    "code": { "import": "code.js" },
+    "code_source": "code.js",
     "runtime": "nodejs22.x"
   },
   "token_lifetime_s": null,
