@@ -1,0 +1,16 @@
+{
+    "events": ["invocation.manual"],
+    "config": {
+      "code_source": "code.js",
+      "runtime": "nodejs22.x"
+    },
+    "description": "Action that adds an attachment.",
+    "name": "Attach annotation",
+    "type": "function",
+    "extension_source": "custom_store",
+    "guide": "",
+    "settings": { "is_action": true },
+    "extension_image_url": "https://surypavel.github.io/r8store/static/users.webp",
+    "store_description": "Adds an attachment."
+  }
+  
