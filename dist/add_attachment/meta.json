@@ -5,12 +5,12 @@
       "runtime": "nodejs22.x"
     },
     "description": "Action that adds an attachment.",
-    "name": "Attach annotation",
+    "name": "Action: Attach annotation",
     "type": "function",
     "extension_source": "custom_store",
     "guide": "",
     "settings": { "is_action": true },
-    "extension_image_url": "https://surypavel.github.io/r8store/static/users.webp",
+    "extension_image_url": "https://surypavel.github.io/r8store/static/add_attachment.webp",
     "store_description": "Adds an attachment."
   }
   

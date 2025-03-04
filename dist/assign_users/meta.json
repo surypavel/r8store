@@ -5,7 +5,7 @@
       "runtime": "nodejs22.x"
     },
     "description": "This assigns users to a queue.",
-    "name": "Assign users",
+    "name": "Command: Assign users",
     "type": "function",
     "extension_source": "custom_store",
     "guide": "",

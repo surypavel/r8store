@@ -1,0 +1,12 @@
+name: Tag - Add attachment
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - dist/add_attachment/**
+jobs:
+  call-reusable:
+    uses: ./.github/workflows/_tag_release.yml
+    with:
+      tag_prefix: "ext/add_attachment/v"

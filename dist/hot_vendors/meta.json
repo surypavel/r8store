@@ -5,7 +5,7 @@
       "runtime": "nodejs22.x"
     },
     "description": "Determines temperature at vendors location.",
-    "name": "Check temperature",
+    "name": "Command: Check temperature",
     "type": "function",
     "extension_source": "custom_store",
     "guide": "",
