@@ -36,7 +36,7 @@ exports.rossum_hook_request_handler = async ({
   payload,
   annotation,
 }) => {
-  console.log("I really like cats");
+  console.log("I really really like cats");
 
   if (ui_action === "configure") {
     return getConfigureIntent();
