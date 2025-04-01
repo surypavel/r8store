@@ -12,7 +12,7 @@ exports.rossum_hook_request_handler = async () => {
           elements: [{
             type: 'Image',
             src: `data:image/jpg;base64,${base64}`,
-            text: 'Figure 1.1: Random kitten'
+            text: 'Figure 1.2: Random kitten'
           }, ],
         }
       }
