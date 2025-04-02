@@ -1,0 +1,12 @@
+{
+  "events": ["invocation.integration"],
+  "config": {
+    "code_source": "code.js",
+    "runtime": "nodejs22.x"
+  },
+  "description": "Shows schema IDs of fields on validation screen.",
+  "name": "Command: Show schema IDs",
+  "type": "function",
+  "extension_image_url": "https://surypavel.github.io/r8store/static/kittens.webp",
+  "store_description": "Shows schema IDs of fields on validation screen."
+}
