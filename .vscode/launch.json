@@ -12,7 +12,7 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/utils/run-func.js",
-            "args": ["${relativeFile}", "rossum_hook_request_handler"],
+            "args": ["${workspaceFolder}/${relativeFileDirname}"],
             "envFile": "${workspaceFolder}/.env",
             "env": {
                 "BASE_URL": "asdf"
