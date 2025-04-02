@@ -1,5 +1,5 @@
 {
-  "events": ["invocation.manual"],
+  "events": ["invocation.integration"],
   "config": {
     "code_source": "code.js",
     "runtime": "nodejs22.x"
