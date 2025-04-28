@@ -8,12 +8,12 @@ export const sendSlackMessage = async (token, message, channel) => {
         const channelId = channel;
         try {
             const resp = await web(token).chat.postMessage({
-                blocks: message,
+                text: message,
                 channel: channelId,
             });
             return resolve(true);
         } catch (error) {
-            return resolve(true);
+            return reject(error);
         }
     });
 };
