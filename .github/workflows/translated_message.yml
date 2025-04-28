@@ -1,0 +1,12 @@
+name: Tag - Translated message
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - dist/translated_message/**
+jobs:
+  call-reusable:
+    uses: ./.github/workflows/_tag_release.yml
+    with:
+      tag_prefix: "ext/translated_message/v"

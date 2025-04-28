@@ -1,0 +1,29 @@
+{
+    "events": ["invocation.integration"],
+    "config": {
+      "code_source": "code.js",
+      "runtime": "nodejs22.x"
+    },
+    "description": "Can show localized message according to your locale.",
+    "name": "Action: Show localized message",
+    "type": "function",
+    "guide": "",
+    "settings": {
+      "locales": [
+        "en",
+        "fr",
+        "de",
+        "cs"
+      ]
+    },
+    "extension_image_url": "https://surypavel.github.io/r8store/static/translated_message.webp",
+    "store_description": "<p>This extension adds a new action into queue settings that enables you to add localized messages according to user's settings.</p><p>In extension settings, you can change the list of supported locales.</p>",
+    "hook_integrations": [{
+      "type": "queue_action",
+      "payload": {},
+      "metadata": {},
+      "name":"Show localized message",
+      "description": "Shows a localized message on a document."
+    }]
+  }
+  
