@@ -16,7 +16,7 @@
         "cs"
       ]
     },
-    "extension_image_url": "https://surypavel.github.io/r8store/static/translated_message.webp",
+    "extension_image_url": "https://surypavel.github.io/r8store/static/translated_message.png",
     "store_description": "<p>This extension adds a new action into queue settings that enables you to add localized messages according to user's settings.</p><p>In extension settings, you can change the list of supported locales.</p>",
     "hook_integrations": [{
       "type": "queue_action",
