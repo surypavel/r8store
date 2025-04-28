@@ -1,0 +1,29 @@
+{
+    "events": ["invocation.integration"],
+    "config": {
+      "code_source": "code.cjs",
+      "runtime": "nodejs22.x"
+    },
+    "description": "Can send a message to a slack channel.",
+    "name": "Action: Send slack message",
+    "type": "function",
+    "guide": "",
+    "settings": {
+      "locales": [
+        "en",
+        "fr",
+        "de",
+        "cs"
+      ]
+    },
+    "extension_image_url": "https://surypavel.github.io/r8store/static/slack.png",
+    "store_description": "<p>Create a slack message.</p>",
+    "hook_integrations": [{
+      "type": "queue_action",
+      "payload": {},
+      "metadata": {},
+      "name":"Send a message to Slack",
+      "description": "Send a message to a channel of your choice."
+    }]
+  }
+  
