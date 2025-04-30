@@ -1,9 +1,12 @@
+const getIDFromUrl = (url) => Number(url.split('/').pop())
+
 exports.rossum_hook_request_handler = async ({
   rossum_authorization_token,
   configure,
   payload,
   base_url,
   settings,
+  annotation,
 }) => {
   if (configure === true) {
     return {
@@ -19,7 +22,7 @@ exports.rossum_hook_request_handler = async ({
       }
     }
   } else {
-    const endpoint = `${base_url}/api/v1/auth/user`;
+    const endpoint = `${base_url}/api/v1/users/${getIDFromUrl(annotation.modified_by)}`;
     const response = await fetch(endpoint, {
       method: "GET",
       headers: {
