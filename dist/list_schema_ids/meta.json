@@ -7,6 +7,11 @@
   "description": "Shows schema IDs of fields on validation screen.",
   "name": "Command: Show schema IDs",
   "type": "function",
-  "extension_image_url": "https://surypavel.github.io/r8store/static/kittens.webp",
-  "store_description": "Shows schema IDs of fields on validation screen."
+  "extension_image_url": "https://surypavel.github.io/r8store/static/list.png",
+  "store_description": "Shows schema IDs of fields on the validation screen.",
+  "hook_integrations": [{
+    "name": "Show schema IDs",
+    "description": "Display the list of schema IDs used on the annotation.",
+    "type": "command"
+  }]
 }

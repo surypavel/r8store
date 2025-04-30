@@ -1,5 +1,5 @@
 {
-    "events": ["invocation.manual"],
+    "events": ["invocation.integration"],
     "config": {
       "code_source": "code.js",
       "runtime": "nodejs22.x"
@@ -7,9 +7,15 @@
     "description": "Determines temperature at vendors location.",
     "name": "Command: Check temperature",
     "type": "function",
-    "extension_source": "custom_store",
     "guide": "",
     "extension_image_url": "https://surypavel.github.io/r8store/static/thermo.webp",
-    "store_description": "Determines temperature at vendors location."
+    "store_description": "Check for sender_address of a current annotation and check the weather (temperature). This shows how you can communicate with external APIs.",
+    "hook_integrations": [{
+      "type": "command",
+      "payload": {},
+      "metadata": {},
+      "name": "Check weather",
+      "description": "Download last 10 annotations as CSV"
+    }]
   }
   

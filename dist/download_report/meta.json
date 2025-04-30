@@ -1,15 +1,21 @@
 {
-    "events": ["invocation.manual"],
+    "events": ["invocation.integration"],
     "config": {
       "code_source": "code.js",
       "runtime": "nodejs22.x"
     },
-    "description": "This downlaods a report.",
-    "name": "Command: Downloads an annotation report",
+    "description": "This is an example that shows how you can download a file from a custom command. It downloads a CSV with the last 10 annotations.",
+    "name": "Command: Download an annotation report",
     "type": "function",
-    "extension_source": "custom_store",
     "guide": "",
     "extension_image_url": "https://surypavel.github.io/r8store/static/reports.webp",
-    "store_description": "This downlaods a report."
+    "store_description": "This is an example that shows how you can download a file from a custom command. It downloads a CSV with the last 10 annotations.",
+    "hook_integrations": [{
+      "type": "command",
+      "payload": {},
+      "metadata": {},
+      "name":"Download an annotation report",
+      "description": "Download last 10 annotations as CSV"
+    }]
   }
   

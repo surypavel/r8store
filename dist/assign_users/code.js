@@ -11,7 +11,7 @@ exports.rossum_hook_request_handler = async ({
   form,
   location,
   base_url,
-  hook,
+  hook_integration,
 }) => {
 
   const queueId = toId(form?.queue ?? '') ?? toId(location.pathname)
@@ -75,7 +75,7 @@ exports.rossum_hook_request_handler = async ({
       intent: {
         form: {
           width: 1000,
-          hook,
+          hook_integration,
           defaultValue: {
             queue: `queues/${queueId}`,
             users: usersToAssign.map(result => ({
@@ -148,7 +148,7 @@ exports.rossum_hook_request_handler = async ({
     intent: {
       form: {
         width: 500,
-        hook,
+        hook_integration,
         schema: {
           type: 'object',
           properties: {
