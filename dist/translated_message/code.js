@@ -41,7 +41,8 @@ exports.rossum_hook_request_handler = async ({
 
     return {
       messages: payloads.flatMap((payload) => {
-        const content = payload[user.ui_settings.locale];
+        const defaultLocale = "en";
+        const content = payload[user.ui_settings.locale ?? defaultLocale];
 
         // Do stuff with payload and rossum token and annotation.
         return content
