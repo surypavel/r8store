@@ -4,13 +4,15 @@ type ServerlessFnProps = {
   settings: Record<string, unknown>;
   secrets: Record<string, unknown>;
   configure: boolean;
-  payload: Record<string, unknown>;
+  annotation: { id: number };
+  payloads: Array<{ message: string }>;
 };
 
 export const rossum_hook_request_handler = async ({
   settings,
   secrets,
-  payload,
+  payloads,
+  annotation,
   configure,
 }: ServerlessFnProps) => {
   if (configure === true) {
@@ -29,19 +31,19 @@ export const rossum_hook_request_handler = async ({
       },
     };
   } else {
-    const sendMessage = async (message) => {
+    const sendMessage = async (message: string) => {
       await sendSlackMessage(secrets.token, message, settings.channel_id);
     };
 
     try {
-      await sendMessage(payload.message);
+      await sendMessage(`You are getting messages from annotation ${annotation.id}: \n\n ${payloads.map(payload => `* ${payload.message}`).join("\n ")}`);
 
       return {
         messages: [{ type: "info", content: "Message was sent successfully." }],
       };  
     } catch (error) {
       return {
-        messages: [{ type: "error", content: error.message }],
+        messages: [{ type: "error", content: error && typeof error == "object" && 'message' in error ? error.message : 'Unknown error' }],
       };
     }
   }

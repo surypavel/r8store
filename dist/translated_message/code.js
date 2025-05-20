@@ -3,7 +3,7 @@ const getIDFromUrl = (url) => Number(url.split('/').pop())
 exports.rossum_hook_request_handler = async ({
   rossum_authorization_token,
   configure,
-  payload,
+  payloads,
   base_url,
   settings,
   annotation,
@@ -31,15 +31,18 @@ exports.rossum_hook_request_handler = async ({
     });
 
     const user = await response.json();
-    const content = payload[user.ui_settings.locale];
 
-    // Do stuff with payload and rossum token and annotation.
-    return content ? {
-      "messages": [{
-        type: "warning",
-        content,
-        id: "all"
-      }]
-    } : undefined
+    return payloads.flatMap(payload => {
+      const content = payload[user.ui_settings.locale];
+
+      // Do stuff with payload and rossum token and annotation.
+      return content ? {
+        "messages": [{
+          type: "warning",
+          content,
+          id: "all"
+        }]
+      } : []  
+    })
   }
 };
