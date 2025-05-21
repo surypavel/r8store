@@ -12,13 +12,32 @@ exports.rossum_hook_request_handler = async ({
     return {
       intent: {
         form: {
+          uiSchema: {
+            type: "VerticalLayout",
+            elements: settings.locales.map((locale) => ({
+              type: "FString",
+              scope: `#/properties/${locale}`,
+            })),
+          },
           schema: {
             type: "object",
             properties: Object.fromEntries(
               settings.locales.map((locale) => [
                 locale,
                 {
-                  type: "string",
+                  oneOf: [
+                    {
+                      type: "string",
+                    },
+                    {
+                      type: "object",
+                      properties: {
+                        __fstring: {
+                          type: "string",
+                        },
+                      },
+                    },
+                  ],
                 },
               ])
             ),
@@ -47,12 +66,12 @@ exports.rossum_hook_request_handler = async ({
         // Do stuff with payload and rossum token and annotation.
         return content
           ? [
-                {
-                  type: "warning",
-                  content,
-                  id: "all",
-                },
-              ]
+              {
+                type: "warning",
+                content,
+                id: "all",
+              },
+            ]
           : [];
       }),
     };

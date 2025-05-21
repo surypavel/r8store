@@ -19,12 +19,31 @@ export const rossum_hook_request_handler = async ({
     return {
       intent: {
         form: {
+          uiSchema: {
+            type: "VerticalLayout",
+            elements: {
+              type: "FString",
+              scope: `#/properties/message`,
+            },
+          },
           schema: {
             type: "object",
             properties: {
               message: {
-                type: "string",
-              }
+                oneOf: [
+                  {
+                    type: "string",
+                  },
+                  {
+                    type: "object",
+                    properties: {
+                      __fstring: {
+                        type: "string",
+                      },
+                    },
+                  },
+                ],
+              },
             },
           },
         },
@@ -36,14 +55,28 @@ export const rossum_hook_request_handler = async ({
     };
 
     try {
-      await sendMessage(`You are getting messages from annotation ${annotation.id}: \n\n ${payloads.map(payload => `* ${payload.message}`).join("\n ")}`);
+      await sendMessage(
+        `You are getting messages from annotation ${
+          annotation.id
+        }: \n\n ${payloads
+          .map((payload) => `* ${payload.message}`)
+          .join("\n ")}`
+      );
 
       return {
         messages: [{ type: "info", content: "Message was sent successfully." }],
-      };  
+      };
     } catch (error) {
       return {
-        messages: [{ type: "error", content: error && typeof error == "object" && 'message' in error ? error.message : 'Unknown error' }],
+        messages: [
+          {
+            type: "error",
+            content:
+              error && typeof error == "object" && "message" in error
+                ? error.message
+                : "Unknown error",
+          },
+        ],
       };
     }
   }
