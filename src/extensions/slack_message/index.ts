@@ -21,10 +21,10 @@ export const rossum_hook_request_handler = async ({
         form: {
           uiSchema: {
             type: "VerticalLayout",
-            elements: {
+            elements: [{
               type: "FString",
               scope: `#/properties/message`,
-            },
+            }],
           },
           schema: {
             type: "object",
