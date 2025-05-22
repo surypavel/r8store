@@ -1,5 +1,21 @@
 const getIDFromUrl = (url) => Number(url.split("/").pop());
 
+const fstring = {
+  oneOf: [
+    {
+      type: "string",
+    },
+    {
+      type: "object",
+      properties: {
+        __fstring: {
+          type: "string",
+        },
+      },
+    },
+  ],
+};
+
 exports.rossum_hook_request_handler = async ({
   rossum_authorization_token,
   configure,
@@ -19,25 +35,16 @@ exports.rossum_hook_request_handler = async ({
               scope: `#/properties/${locale}`,
             })),
           },
+          definitions: {
+            fstring,
+          },
           schema: {
             type: "object",
             properties: Object.fromEntries(
               settings.locales.map((locale) => [
                 locale,
                 {
-                  oneOf: [
-                    {
-                      type: "string",
-                    },
-                    {
-                      type: "object",
-                      properties: {
-                        __fstring: {
-                          type: "string",
-                        },
-                      },
-                    },
-                  ],
+                  $ref: "#/definitions/fstring",
                 },
               ])
             ),
