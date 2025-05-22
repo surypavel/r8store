@@ -30,7 +30,7 @@ exports.rossum_hook_request_handler = async ({
         form: {
           uiSchema: {
             type: "VerticalLayout",
-            elements: settings.locales.map((locale) => ({
+            elements: [...settings.locales, "datapoint"].map((locale) => ({
               type: "FString",
               scope: `#/properties/${locale}`,
             })),
@@ -41,7 +41,7 @@ exports.rossum_hook_request_handler = async ({
           schema: {
             type: "object",
             properties: Object.fromEntries(
-              settings.locales.map((locale) => [
+              [...settings.locales, "datapoint"].map((locale) => [
                 locale,
                 {
                   $ref: "#/definitions/fstring",
@@ -76,7 +76,7 @@ exports.rossum_hook_request_handler = async ({
               {
                 type: "warning",
                 content,
-                id: "all",
+                id: payload.datapoint || "all",
               },
             ]
           : [];
