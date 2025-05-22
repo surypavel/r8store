@@ -1,0 +1,21 @@
+{
+    "events": ["invocation.integration"],
+    "config": {
+      "code_source": "code.js",
+      "runtime": "nodejs22.x"
+    },
+    "description": "Adds a custom extension.",
+    "name": "Store: Custom extension",
+    "type": "function",
+    "guide": "",
+    "extension_image_url": "https://surypavel.github.io/r8store/static/thermo.webp",
+    "store_description": "Check for sender_address of a current annotation and check the weather (temperature). This shows how you can communicate with external APIs.",
+    "hook_integrations": [{
+      "type": "store",
+      "payload": {},
+      "metadata": {},
+      "name": "Add custom extension",
+      "description": "Adds a custom extension to external store."
+    }]
+  }
+  
