@@ -7,6 +7,8 @@ const custom = {
     "description": "Custom added extension.",
     "name": "Custom added extension",
     "type": "function",
+    "guide": "",
+    "extension_image_url": "https://surypavel.github.io/r8store/static/thermo.webp",
     "store_description": "Check for sender_address of a current annotation and check the weather (temperature). This shows how you can communicate with external APIs.",
     "hook_integrations": []
   };
