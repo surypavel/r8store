@@ -1,8 +1,7 @@
 const getIDFromUrl = (url) => Number(url.split("/").pop());
 
 const fstring = {
-  oneOf: [
-    {
+  oneOf: [{
       type: "string",
     },
     {
@@ -25,6 +24,16 @@ exports.rossum_hook_request_handler = async ({
   annotation,
 }) => {
   if (configure === true) {
+    if (!settings.locales) {
+      return {
+        intent: {
+          info: {
+            message: "You should set up settings.locales in the hook settings first, otherwise, this extension will not do anything fun."
+          }
+        }
+      }
+    }
+
     return {
       intent: {
         form: {
@@ -53,6 +62,16 @@ exports.rossum_hook_request_handler = async ({
       },
     };
   } else {
+    if (!rossum_authorization_token) {
+      return {
+        messages: [{
+          type: "error",
+          content: "This hook needs token owner to function.",
+          id: "all",
+        }]
+      };
+    }
+
     const endpoint = `${base_url}/api/v1/users/${getIDFromUrl(
       annotation.modified_by
     )}`;
@@ -71,15 +90,11 @@ exports.rossum_hook_request_handler = async ({
         const content = payload[user.ui_settings.locale ?? defaultLocale];
 
         // Do stuff with payload and rossum token and annotation.
-        return content
-          ? [
-              {
-                type: "warning",
-                content,
-                id: payload.datapoint || "all",
-              },
-            ]
-          : [];
+        return content ? [{
+          type: "warning",
+          content,
+          id: payload.datapoint || "all",
+        }, ] : [];
       }),
     };
   }
