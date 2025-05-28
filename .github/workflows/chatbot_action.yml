@@ -1,0 +1,12 @@
+name: Tag - Chatbot action
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - dist/chatbot_action/**
+jobs:
+  call-reusable:
+    uses: ./.github/workflows/_tag_release.yml
+    with:
+      tag_prefix: "ext/chatbot_action/v"

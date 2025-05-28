@@ -1,0 +1,21 @@
+{
+    "events": ["invocation.integration"],
+    "config": {
+      "code_source": "code.js",
+      "runtime": "nodejs22.x"
+    },
+    "description": "This is an example action that calls LLM and shows a message with the response.",
+    "name": "Action: Call LLM",
+    "type": "function",
+    "guide": "",
+    "extension_image_url": "https://surypavel.github.io/r8store/static/reports.webp",
+    "store_description": "This is an example action that calls LLM and shows a message with the response.",
+    "hook_integrations": [{
+      "type": "queue_action",
+      "payload": {},
+      "metadata": {},
+      "name":"Call LLM",
+      "description": ""
+    }]
+  }
+  
