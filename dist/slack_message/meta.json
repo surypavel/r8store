@@ -18,7 +18,7 @@
     },
     "extension_image_url": "https://surypavel.github.io/r8store/static/slack.png",
     "store_description": "<p>Create a slack message.</p>",
-    "hook_integrations": [{
+    "hook_interfaces": [{
       "type": "queue_action",
       "payload": {},
       "metadata": {},

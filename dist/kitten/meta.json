@@ -10,7 +10,7 @@
   "guide": "",
   "extension_image_url": "https://surypavel.github.io/r8store/static/kittens.webp",
   "store_description": "Gets a random cute kitten from cataas service. Shows how you can display an image in the intent UI.",
-  "hook_integrations": [{
+  "hook_interfaces": [{
     "name": "Display a kitten",
     "description": "Show a nice kitten using an external service.",
     "type": "command"

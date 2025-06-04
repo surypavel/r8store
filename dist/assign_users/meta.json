@@ -10,7 +10,7 @@
     "guide": "",
     "extension_image_url": "https://surypavel.github.io/r8store/static/users.webp",
     "store_description": "When in the context of a queue, you can trigger a modal that allows you to assign users to the queue.",
-    "hook_integrations": [{
+    "hook_interfaces": [{
       "type": "command",
       "payload": {},
       "metadata": {},

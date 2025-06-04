@@ -10,7 +10,7 @@
     "guide": "",
     "extension_image_url": "https://surypavel.github.io/r8store/static/reports.webp",
     "store_description": "This is an example that shows how you can download a file from a custom command. It downloads a CSV with the last 10 annotations.",
-    "hook_integrations": [{
+    "hook_interfaces": [{
       "type": "command",
       "payload": {},
       "metadata": {},

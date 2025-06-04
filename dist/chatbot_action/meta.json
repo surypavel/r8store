@@ -10,7 +10,7 @@
     "guide": "",
     "extension_image_url": "https://surypavel.github.io/r8store/static/reports.webp",
     "store_description": "This is an example action that calls LLM and shows a message with the response.",
-    "hook_integrations": [{
+    "hook_interfaces": [{
       "type": "queue_action",
       "payload": {},
       "metadata": {},
