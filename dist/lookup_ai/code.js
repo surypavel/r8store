@@ -68,7 +68,9 @@ exports.rossum_hook_request_handler = async ({
     const body = await response.json();
     const options = body.messages
       .find((message) => message.role === "system")
-      .content.split(",").map(option => ({ label: option, value: option }));
+      .content.split(",")
+      .map((item) => item.trim())
+      .map((option) => ({ label: option, value: option }));
 
     return {
       options,
