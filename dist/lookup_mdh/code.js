@@ -27,6 +27,17 @@ exports.rossum_hook_request_handler = async ({
     return await response.json();
   };
 
+  const findDatasets = async () => {
+    const response = await fetch(`${url}/v2/dataset/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${secrets.token}`,
+      },
+    });
+
+    return await response.json();
+  }
+
   const url =
     settings.url || "https://elis.master.r8.lol/svc/master-data-hub/api";
 
@@ -37,22 +48,23 @@ exports.rossum_hook_request_handler = async ({
       return {
         intent: {
           form: {
+            width: 600,
             defaultValue: {
-              data,
+              results: data.results.map(result => ({ ...result, id: result._id })),
             },
             uiSchema: {
               type: "Group",
-              elements: [
-                {
-                  type: "Table",
-                  scope: "#/properties/data",
-                },
-              ],
+              elements: [{
+                type: "Table",
+                scope: "#/properties/results",
+              }, ],
             },
           },
         },
       };
     }
+
+    const datasets = await findDatasets()
 
     return {
       intent: {
@@ -73,14 +85,7 @@ exports.rossum_hook_request_handler = async ({
   }
 
   if (configure === true) {
-    const response = await fetch(`${url}/v2/dataset/`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${secrets.token}`,
-      },
-    });
-
-    const datasets = await response.json();
+    const datasets = await findDatasets()
 
     return {
       intent: {
