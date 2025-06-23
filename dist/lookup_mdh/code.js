@@ -48,7 +48,7 @@ exports.rossum_hook_request_handler = async ({
         ),
         projection: {},
         skip: 0,
-        limit: 100,
+        limit: 500,
         sort: {},
         dataset,
       }),
