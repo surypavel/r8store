@@ -18,6 +18,7 @@ exports.rossum_hook_request_handler = async ({
   configure,
   payload,
   base_url,
+  rossum_authorization_token,
 }) => {
   if (configure === true) {
     return {
