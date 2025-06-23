@@ -14,20 +14,24 @@ const fstring = {
   ],
 };
 
-exports.rossum_hook_request_handler = async ({ configure, payload, base_url }) => {
+exports.rossum_hook_request_handler = async ({
+  configure,
+  payload,
+  base_url,
+}) => {
   if (configure === true) {
     return {
       intent: {
-        uiSchema: {
-          type: "VerticalLayout",
-          elements: [
-            {
-              type: "FString",
-              scope: "#/properties/prompt",
-            },
-          ],
-        },
         form: {
+          uiSchema: {
+            type: "VerticalLayout",
+            elements: [
+              {
+                type: "FString",
+                scope: "#/properties/prompt",
+              },
+            ],
+          },
           schema: {
             definitions: {
               fstring,
