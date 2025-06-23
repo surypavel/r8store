@@ -1,16 +1,19 @@
-exports.rossum_hook_request_handler = async ({ configure, secrets, payload, settings }) => {
-  const url = settings.url || "https://elis.master.r8.lol/svc/master-data-hub/api"
+exports.rossum_hook_request_handler = async ({
+  configure,
+  secrets,
+  payload,
+  settings,
+}) => {
+  const url =
+    settings.url || "https://elis.master.r8.lol/svc/master-data-hub/api";
 
   if (configure === true) {
-    const response = await fetch(
-      `${url}/v2/dataset/`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${secrets.token}`,
-        },
-      }
-    );
+    const response = await fetch(`${url}/v2/dataset/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${secrets.token}`,
+      },
+    });
 
     const datasets = await response.json();
 
@@ -22,7 +25,7 @@ exports.rossum_hook_request_handler = async ({ configure, secrets, payload, sett
             properties: {
               dataset: {
                 type: "string",
-                enum: datasets.map((d) => d.dataset_name),
+                enum: datasets.datasets.map((d) => d.dataset_name),
               },
               value_key: {
                 type: "string",
@@ -36,31 +39,31 @@ exports.rossum_hook_request_handler = async ({ configure, secrets, payload, sett
       },
     };
   } else {
-    const response = await fetch(
-      `${url}/v1/data/find`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${secrets.token}`,
-        },
-        body: JSON.stringify({
-          find: {},
-          projection: {},
-          skip: 0,
-          limit: 100,
-          sort: {},
-          dataset: payload.dataset,
-        }),
-      }
-    )
+    const response = await fetch(`${url}/v1/data/find`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${secrets.token}`,
+      },
+      body: JSON.stringify({
+        find: {},
+        projection: {},
+        skip: 0,
+        limit: 100,
+        sort: {},
+        dataset: payload.dataset,
+      }),
+    });
 
     // Get results from response json
     const data = await response.json();
 
     return {
-      options: data.results,
-      value: data.results[0]
-    }
+      options: data.results.map((result) => ({
+        value: result[payload.value_key],
+        label: result[payload.label_key],
+      })),
+      value: data.results[0][payload.value_key],
+    };
   }
 };
