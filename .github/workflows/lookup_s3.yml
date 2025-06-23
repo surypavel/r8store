@@ -1,0 +1,12 @@
+name: Tag - Lookup S3
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - dist/lookup_s3/**
+jobs:
+  call-reusable:
+    uses: ./.github/workflows/_tag_release.yml
+    with:
+      tag_prefix: "ext/lookup_s3/v"

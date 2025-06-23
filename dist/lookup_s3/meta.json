@@ -1,0 +1,25 @@
+{
+  "events": ["invocation.integration"],
+  "config": {
+    "code_source": "code.cjs",
+    "runtime": "nodejs22.x"
+  },
+  "description": "Does a lookup via S3",
+  "name": "Lookup: S3",
+  "type": "function",
+  "extension_image_url": "https://surypavel.github.io/r8store/static/lookup_s3.png",
+  "store_description": "Does a lookup via S3",
+  "hook_interfaces": [
+    {
+      "name": "Command: Show S3 master data",
+      "description": "Displays master data from S3.",
+      "type": "command",
+      "payload": { "variant": "show_master_data" }
+    },
+    {
+      "name": "Lookup: S3",
+      "description": "Does a lookup via S3",
+      "type": "queue_lookup"
+    }
+  ]
+}
