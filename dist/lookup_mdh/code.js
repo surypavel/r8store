@@ -86,6 +86,8 @@ exports.rossum_hook_request_handler = async ({
 
   if (configure === true) {
     const datasets = await findDatasets()
+    
+    const columns = form && form.dataset ? Object.keys((await findData(form.dataset)).results[0]) : []
 
     return {
       intent: {
@@ -99,9 +101,11 @@ exports.rossum_hook_request_handler = async ({
               },
               value_key: {
                 type: "string",
+                enum: columns
               },
               label_key: {
                 type: "string",
+                enum: columns
               },
             },
           },
