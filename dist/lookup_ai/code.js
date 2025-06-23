@@ -72,7 +72,7 @@ exports.rossum_hook_request_handler = async ({
 
     return {
       options,
-      value: options[0],
+      value: options[0].value,
     };
   }
 };
