@@ -2,7 +2,7 @@ exports.rossum_hook_request_handler = async ({ configure, secrets, payload, sett
   const url = settings.url || "https://elis.master.r8.lol/svc/master-data-hub/api"
 
   if (configure === true) {
-    const datasets = await fetch(
+    const response = await fetch(
       `${url}/v2/dataset/`,
       {
         method: "GET",
@@ -12,6 +12,8 @@ exports.rossum_hook_request_handler = async ({ configure, secrets, payload, sett
       }
     );
 
+    const datasets = await response.json();
+
     return {
       intent: {
         form: {
@@ -20,7 +22,7 @@ exports.rossum_hook_request_handler = async ({ configure, secrets, payload, sett
             properties: {
               dataset: {
                 type: "string",
-                enum: await datasets.json(),
+                enum: datasets.map((d) => d.dataset_name),
               },
               value_key: {
                 type: "string",
