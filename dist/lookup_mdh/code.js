@@ -3,9 +3,74 @@ exports.rossum_hook_request_handler = async ({
   secrets,
   payload,
   settings,
+  variant,
+  form,
+  hook_interface,
 }) => {
+  const findData = async (dataset) => {
+    const response = await fetch(`${url}/v1/data/find`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${secrets.token}`,
+      },
+      body: JSON.stringify({
+        find: {},
+        projection: {},
+        skip: 0,
+        limit: 100,
+        sort: {},
+        dataset,
+      }),
+    });
+
+    return await response.json();
+  };
+
   const url =
     settings.url || "https://elis.master.r8.lol/svc/master-data-hub/api";
+
+  if (variant === "show_master_data") {
+    if (form && form.dataset) {
+      const data = await findData(form.dataset);
+
+      return {
+        intent: {
+          form: {
+            defaultValue: {
+              data,
+            },
+            uiSchema: {
+              type: "Group",
+              elements: [
+                {
+                  type: "Table",
+                  scope: "#/properties/data",
+                },
+              ],
+            },
+          },
+        },
+      };
+    }
+
+    return {
+      intent: {
+        form: {
+          hook_interface,
+          schema: {
+            type: "object",
+            properties: {
+              dataset: {
+                type: "string",
+                enum: datasets.datasets.map((d) => d.dataset_name),
+              },
+            },
+          },
+        },
+      },
+    };
+  }
 
   if (configure === true) {
     const response = await fetch(`${url}/v2/dataset/`, {
@@ -39,24 +104,7 @@ exports.rossum_hook_request_handler = async ({
       },
     };
   } else {
-    const response = await fetch(`${url}/v1/data/find`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${secrets.token}`,
-      },
-      body: JSON.stringify({
-        find: {},
-        projection: {},
-        skip: 0,
-        limit: 100,
-        sort: {},
-        dataset: payload.dataset,
-      }),
-    });
-
-    // Get results from response json
-    const data = await response.json();
+    const data = await findData(payload.dataset);
 
     return {
       options: data.results.map((result) => ({
