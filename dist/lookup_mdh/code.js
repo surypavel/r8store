@@ -1,3 +1,18 @@
+const fstring = {
+  oneOf: [{
+      type: "string",
+    },
+    {
+      type: "object",
+      properties: {
+        __fstring: {
+          type: "string",
+        },
+      },
+    },
+  ],
+};
+
 exports.rossum_hook_request_handler = async ({
   configure,
   secrets,
@@ -7,7 +22,13 @@ exports.rossum_hook_request_handler = async ({
   form,
   hook_interface,
 }) => {
-  const findData = async (dataset) => {
+  const findData = async (dataset, filters) => {
+    console.log(
+      Object.fromEntries(
+        filters.map((filter) => [filter.match_key, filter.value])
+      )
+    );
+
     const response = await fetch(`${url}/v1/data/find`, {
       method: "POST",
       headers: {
@@ -15,7 +36,15 @@ exports.rossum_hook_request_handler = async ({
         Authorization: `Bearer ${secrets.token}`,
       },
       body: JSON.stringify({
-        find: {},
+        find: Object.fromEntries(
+          filters.map((filter) => [
+            filter.match_key,
+            {
+              $regex: filter.value,
+              $options: "i"
+            },
+          ])
+        ),
         projection: {},
         skip: 0,
         limit: 100,
@@ -36,21 +65,24 @@ exports.rossum_hook_request_handler = async ({
     });
 
     return await response.json();
-  }
+  };
 
   const url =
     settings.url || "https://elis.master.r8.lol/svc/master-data-hub/api";
 
   if (variant === "show_master_data") {
     if (form && form.dataset) {
-      const data = await findData(form.dataset);
+      const data = await findData(form.dataset, []);
 
       return {
         intent: {
           form: {
             width: 600,
             defaultValue: {
-              results: data.results.map(result => ({ ...result, id: result._id })),
+              results: data.results.map((result) => ({
+                ...result,
+                id: result._id,
+              })),
             },
             uiSchema: {
               type: "Group",
@@ -64,7 +96,7 @@ exports.rossum_hook_request_handler = async ({
       };
     }
 
-    const datasets = await findDatasets()
+    const datasets = await findDatasets();
 
     return {
       intent: {
@@ -85,14 +117,21 @@ exports.rossum_hook_request_handler = async ({
   }
 
   if (configure === true) {
-    const datasets = await findDatasets()
-    
-    const columns = form && form.dataset ? Object.keys((await findData(form.dataset)).results[0]) : []
+    const datasets = await findDatasets();
+
+    const columns =
+      form && form.dataset ?
+      Object.keys((await findData(form.dataset, [])).results[0]) :
+      [];
 
     return {
       intent: {
         form: {
+          width: 600,
           schema: {
+            definitions: {
+              fstring,
+            },
             type: "object",
             properties: {
               dataset: {
@@ -101,11 +140,26 @@ exports.rossum_hook_request_handler = async ({
               },
               value_key: {
                 type: "string",
-                enum: columns
+                enum: columns,
               },
               label_key: {
                 type: "string",
-                enum: columns
+                enum: columns,
+              },
+              filters: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    match_key: {
+                      type: "string",
+                      enum: columns,
+                    },
+                    value: {
+                      $ref: "#/definitions/fstring",
+                    },
+                  },
+                },
               },
             },
           },
@@ -113,7 +167,7 @@ exports.rossum_hook_request_handler = async ({
       },
     };
   } else {
-    const data = await findData(payload.dataset);
+    const data = await findData(payload.dataset, payload?.filters ?? []);
 
     return {
       options: data.results.map((result) => ({
