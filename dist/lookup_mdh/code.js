@@ -1,5 +1,6 @@
 const fstring = {
-  oneOf: [{
+  oneOf: [
+    {
       type: "string",
     },
     {
@@ -41,7 +42,7 @@ exports.rossum_hook_request_handler = async ({
             filter.match_key,
             {
               $regex: filter.value,
-              $options: "i"
+              $options: "i",
             },
           ])
         ),
@@ -86,10 +87,12 @@ exports.rossum_hook_request_handler = async ({
             },
             uiSchema: {
               type: "Group",
-              elements: [{
-                type: "Table",
-                scope: "#/properties/results",
-              }, ],
+              elements: [
+                {
+                  type: "Table",
+                  scope: "#/properties/results",
+                },
+              ],
             },
           },
         },
@@ -120,14 +123,50 @@ exports.rossum_hook_request_handler = async ({
     const datasets = await findDatasets();
 
     const columns =
-      form && form.dataset ?
-      Object.keys((await findData(form.dataset, [])).results[0]) :
-      [];
+      form && form.dataset
+        ? Object.keys((await findData(form.dataset, [])).results[0])
+        : [];
 
     return {
       intent: {
         form: {
           width: 600,
+          uiSchema: {
+            type: "VerticalLayout",
+            elements: [
+              {
+                type: "Control",
+                scope: "#/properties/dataset",
+              },
+              {
+                type: "Control",
+                scope: "#/properties/value_key",
+              },
+              {
+                type: "Control",
+                scope: "#/properties/label_key",
+              },
+              {
+                type: "Control",
+                scope: "#/properties/filters",
+                options: {
+                  detail: {
+                    type: "VerticalLayout",
+                    elements: [
+                      {
+                        type: "Control",
+                        scope: "#/properties/match_key",
+                      },
+                      {
+                        type: "FString",
+                        scope: "#/properties/value",
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          },
           schema: {
             definitions: {
               fstring,
