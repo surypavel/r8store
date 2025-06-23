@@ -1,0 +1,17 @@
+{
+  "events": ["invocation.integration"],
+  "config": {
+    "code_source": "code.js",
+    "runtime": "nodejs22.x"
+  },
+  "description": "Does a lookup via MDH",
+  "name": "Lookup: Master Data Hub",
+  "type": "function",
+  "extension_image_url": "https://surypavel.github.io/r8store/static/lookup_mdh.png",
+  "store_description": "Does a lookup via MDH",
+  "hook_interfaces": [{
+    "name": "Lookup: Master Data Hub",
+    "description": "Does a lookup via MDH",
+    "type": "queue_lookup"
+  }]
+}
