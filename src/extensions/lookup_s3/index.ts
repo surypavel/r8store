@@ -1,4 +1,4 @@
-import { createS3, listFilesInBucket, writeJsonToS3 } from "./util";
+import { createS3, listFilesInBucket, readJsonFromS3, writeJsonToS3 } from "./util";
 
 type ServerlessFnProps = {
   settings: { endpoint: string, region: string, bucket: string },
@@ -47,7 +47,9 @@ export const rossum_hook_request_handler = async ({
   const s3 = createS3(settings, secrets);
 
   const findData = async (dataset: string, filters: { match_key: string; value: string }[]) => {
-    return await { results: [] };
+    return {
+      results: await readJsonFromS3(s3, settings.bucket, dataset)
+    };
   };
 
   const findDatasets = async () => {
@@ -198,7 +200,7 @@ export const rossum_hook_request_handler = async ({
     const data = await findData(payload.dataset, payload?.filters ?? []);
 
     return {
-      options: data.results.map((result) => ({
+      options: data.results.map((result: any) => ({
         value: result[payload.value_key],
         label: result[payload.label_key],
       })),
