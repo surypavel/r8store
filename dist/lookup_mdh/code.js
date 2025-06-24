@@ -236,6 +236,22 @@ exports.rossum_hook_request_handler = async ({
         intent: {
           form: {
             width: 600,
+            uiSchema: {
+              type: "VerticalLayout",
+              elements: [
+                {
+                  type: "Control",
+                  scope: "#/properties/dataset",
+                },
+                {
+                  type: "Control",
+                  scope: "#/properties/aggregate",
+                  options: {
+                    multi: true,
+                  },
+                },
+              ],
+            },
             schema: {
               type: "object",
               properties: {
