@@ -14,12 +14,19 @@
       "name": "Command: Show MDH master data",
       "description": "Displays master data from MDH.",
       "type": "command",
-      "payload": { "variant": "show_master_data" }
+      "payload": { "variant": "command_show_master_data" }
     },
     {
       "name": "Lookup: Master Data Hub",
       "description": "Does a lookup via MDH",
-      "type": "queue_lookup"
+      "type": "queue_lookup",
+      "payload": { "variant": "queue_lookup" }
+    },
+    {
+      "name": "Lookup: Master Data Hub (aggregate)",
+      "description": "Does a complex lookup via MDH",
+      "type": "queue_lookup",
+      "payload": { "variant": "queue_lookup_aggregate" }
     }
   ]
 }

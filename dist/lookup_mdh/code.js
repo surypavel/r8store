@@ -23,13 +23,28 @@ exports.rossum_hook_request_handler = async ({
   form,
   hook_interface,
 }) => {
-  const findData = async (dataset, filters) => {
-    console.log(
-      Object.fromEntries(
-        filters.map((filter) => [filter.match_key, filter.value])
-      )
-    );
+    const aggregateData = async (dataset, query) => {
 
+    const response = await fetch(`${url}/v1/data/find`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${secrets.token}`,
+      },
+      body: JSON.stringify({
+        find: {},
+        projection: query,
+        skip: 0,
+        limit: 500,
+        sort: {},
+        dataset,
+      }),
+    });
+
+    return await response.json();
+  };
+
+  const findData = async (dataset, filters) => {
     const response = await fetch(`${url}/v1/data/find`, {
       method: "POST",
       headers: {
@@ -71,7 +86,7 @@ exports.rossum_hook_request_handler = async ({
   const url =
     settings.url || "https://elis.master.r8.lol/svc/master-data-hub/api";
 
-  if (variant === "show_master_data") {
+  if (variant === "command_show_master_data") {
     if (form && form.dataset) {
       const data = await findData(form.dataset, []);
 
@@ -117,85 +132,85 @@ exports.rossum_hook_request_handler = async ({
         },
       },
     };
-  }
+  } else if (variant === "queue_lookup") {
+    if (configure === true) {
+      const datasets = await findDatasets();
 
-  if (configure === true) {
-    const datasets = await findDatasets();
+      const columns =
+        form && form.dataset
+          ? Object.keys((await findData(form.dataset, [])).results[0])
+          : [];
 
-    const columns =
-      form && form.dataset
-        ? Object.keys((await findData(form.dataset, [])).results[0])
-        : [];
-
-    return {
-      intent: {
-        form: {
-          width: 600,
-          uiSchema: {
-            type: "VerticalLayout",
-            elements: [
-              {
-                type: "Control",
-                scope: "#/properties/dataset",
-              },
-              {
-                type: "Control",
-                scope: "#/properties/value_key",
-              },
-              {
-                type: "Control",
-                scope: "#/properties/label_key",
-              },
-              {
-                type: "Control",
-                scope: "#/properties/filters",
-                options: {
-                  detail: {
-                    type: "VerticalLayout",
-                    elements: [
-                      {
-                        type: "Control",
-                        scope: "#/properties/match_key",
-                      },
-                      {
-                        type: "FString",
-                        scope: "#/properties/value",
-                      },
-                    ],
+      return {
+        intent: {
+          form: {
+            width: 600,
+            uiSchema: {
+              type: "VerticalLayout",
+              elements: [
+                {
+                  type: "Control",
+                  scope: "#/properties/dataset",
+                },
+                {
+                  type: "Control",
+                  scope: "#/properties/value_key",
+                },
+                {
+                  type: "Control",
+                  scope: "#/properties/label_key",
+                },
+                {
+                  type: "Control",
+                  scope: "#/properties/filters",
+                  options: {
+                    detail: {
+                      type: "VerticalLayout",
+                      elements: [
+                        {
+                          type: "Control",
+                          scope: "#/properties/match_key",
+                        },
+                        {
+                          type: "FString",
+                          scope: "#/properties/value",
+                        },
+                      ],
+                    },
                   },
                 },
-              },
-            ],
-          },
-          schema: {
-            definitions: {
-              fstring,
+              ],
             },
-            type: "object",
-            properties: {
-              dataset: {
-                type: "string",
-                enum: datasets.datasets.map((d) => d.dataset_name),
+            schema: {
+              definitions: {
+                fstring,
               },
-              value_key: {
-                type: "string",
-                enum: columns,
-              },
-              label_key: {
-                type: "string",
-                enum: columns,
-              },
-              filters: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    match_key: {
-                      type: "string",
-                      enum: columns,
-                    },
-                    value: {
-                      $ref: "#/definitions/fstring",
+              type: "object",
+              properties: {
+                dataset: {
+                  type: "string",
+                  enum: datasets.datasets.map((d) => d.dataset_name),
+                },
+                value_key: {
+                  type: "string",
+                  enum: columns,
+                },
+                label_key: {
+                  type: "string",
+                  enum: columns,
+                },
+                filters: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      match_key: {
+                        type: "string",
+                        enum: columns,
+                      },
+                      value: {
+                        $ref: "#/definitions/fstring",
+                      },
                     },
                   },
                 },
@@ -203,17 +218,48 @@ exports.rossum_hook_request_handler = async ({
             },
           },
         },
-      },
-    };
-  } else {
-    const data = await findData(payload.dataset, payload?.filters ?? []);
+      };
+    } else {
+      const data = await findData(payload.dataset, payload?.filters ?? []);
 
-    return {
-      options: data.results.map((result) => ({
-        value: result[payload.value_key],
-        label: result[payload.label_key],
-      })),
-      value: data.results[0][payload.value_key],
-    };
+      return {
+        options: data.results.map((result) => ({
+          value: result[payload.value_key],
+          label: result[payload.label_key],
+        })),
+        value: data.results[0][payload.value_key],
+      };
+    }
+  } else if (variant === "queue_lookup_aggregate") {
+    if (configure === true) {
+      const datasets = await findDatasets();
+
+      return {
+        intent: {
+          form: {
+            width: 600,
+            schema: {
+              type: "object",
+              properties: {
+                dataset: {
+                  type: "string",
+                  enum: datasets.datasets.map((d) => d.dataset_name),
+                },
+                query: {
+                  type: "string",
+                },
+              },
+            },
+          },
+        },
+      };
+    } else {
+      const data = await aggregateData(payload.dataset, payload.query);
+
+      return {
+        options: data.results,
+        value: data.results[0].value,
+      };
+    }
   }
 };
