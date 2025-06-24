@@ -23,20 +23,18 @@ exports.rossum_hook_request_handler = async ({
   form,
   hook_interface,
 }) => {
-    const aggregateData = async (dataset, query) => {
-
-    const response = await fetch(`${url}/v1/data/find`, {
+  const aggregateData = async (dataset, aggregate) => {
+    const response = await fetch(`${url}/v1/data/aggregate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${secrets.token}`,
       },
       body: JSON.stringify({
-        find: {},
-        projection: query,
-        skip: 0,
-        limit: 500,
-        sort: {},
+        aggregate,
+        collation: {},
+        let: {},
+        options: {},
         dataset,
       }),
     });
@@ -245,7 +243,7 @@ exports.rossum_hook_request_handler = async ({
                   type: "string",
                   enum: datasets.datasets.map((d) => d.dataset_name),
                 },
-                query: {
+                aggregate: {
                   type: "string",
                 },
               },
@@ -254,7 +252,10 @@ exports.rossum_hook_request_handler = async ({
         },
       };
     } else {
-      const data = await aggregateData(payload.dataset, payload.query);
+      const data = await aggregateData(
+        payload.dataset,
+        JSON.parse(payload.aggregate)
+      );
 
       return {
         options: data.results,
