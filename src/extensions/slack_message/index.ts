@@ -15,6 +15,17 @@ export const rossum_hook_request_handler = async ({
   annotation,
   configure,
 }: ServerlessFnProps) => {
+  const secretsToken = secrets.token;
+  const channelId = settings.channel_id;
+
+  if (typeof secretsToken !== "string") {
+    throw new Error("Missing token.");
+  }
+
+  if (typeof channelId !== "string") {
+    throw new Error("Missing channel_id.");
+  }
+
   if (configure === true) {
     return {
       intent: {
@@ -51,7 +62,7 @@ export const rossum_hook_request_handler = async ({
     };
   } else {
     const sendMessage = async (message: string) => {
-      await sendSlackMessage(secrets.token, message, settings.channel_id);
+      await sendSlackMessage(secretsToken, message, channelId);
     };
 
     try {

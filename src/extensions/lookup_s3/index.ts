@@ -1,6 +1,8 @@
+import { createS3, listS3Buckets } from "./util";
+
 type ServerlessFnProps = {
-  settings: Record<string, unknown>;
-  secrets: Record<string, unknown>;
+  settings: { endpoint: string, region: string },
+  secrets: { accessKeyId: string; secretAccessKey: string }
   configure: boolean;
   annotation: { id: number };
   payloads: Array<{ message: string }>;
@@ -37,16 +39,19 @@ export const rossum_hook_request_handler = async ({
   configure,
   payload,
   settings,
+  secrets,
   variant,
   form,
   hook_interface,
 }: ServerlessFnProps) => {
+  const s3 = createS3(settings, secrets);
+
   const findData = async (dataset: string, filters: { match_key: string; value: string }[]) => {
     return await { results: [] };
   };
 
   const findDatasets = async () => {
-    return await { datasets: [{ dataset_name: 'asdf' }]};
+    return (await listS3Buckets(s3))?.map((d) => ({ dataset_name: d.Name })) ?? [];
   };
 
   if (variant === "show_master_data") {
@@ -85,7 +90,7 @@ export const rossum_hook_request_handler = async ({
             properties: {
               dataset: {
                 type: "string",
-                enum: datasets.datasets.map((d) => d.dataset_name),
+                enum: datasets.map((d) => d.dataset_name),
               },
             },
           },
@@ -150,7 +155,7 @@ export const rossum_hook_request_handler = async ({
             properties: {
               dataset: {
                 type: "string",
-                enum: datasets.datasets.map((d) => d.dataset_name),
+                enum: datasets.map((d) => d.dataset_name),
               },
               value_key: {
                 type: "string",

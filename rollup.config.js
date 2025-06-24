@@ -32,6 +32,7 @@ export default extensions.map((extension) => ({
       file: `dist/${extension}/code.cjs`,
       format: 'cjs',
       exports: 'auto',
+      inlineDynamicImports: true,
     },
     external: externalModules,
     plugins: [

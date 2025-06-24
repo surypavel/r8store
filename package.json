@@ -3,6 +3,7 @@
         "build": "rollup -c"
     },
     "dependencies": {
+        "@aws-sdk/client-s3": "^3.835.0",
         "@slack/web-api": "^7.9.1",
         "dotenv": "^16.4.7",
         "node-fetch": "^2.6.1",

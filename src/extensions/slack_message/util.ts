@@ -1,9 +1,9 @@
 import { WebClient } from '@slack/web-api';
 
 const options = {};
-const web = (token) => new WebClient(token, options);
+const web = (token: string) => new WebClient(token, options);
 
-export const sendSlackMessage = async (token, message, channel) => {
+export const sendSlackMessage = async (token: string, message: string, channel: string) => {
     return new Promise(async (resolve, reject) => {
         const channelId = channel;
         try {
