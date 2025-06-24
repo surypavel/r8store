@@ -261,6 +261,8 @@ exports.rossum_hook_request_handler = async ({
                 },
                 aggregate: {
                   type: "string",
+                  description:
+                    'You can use a mongo query aggregation here. You have to finish the pipeline by mapping your desired fields to value/label. Example: [{"$project":{"label":"$country","value":"$country"}}].',
                 },
               },
             },
