@@ -3,6 +3,7 @@ import {
   GetObjectCommand,
   PutObjectCommand,
   ListBucketsCommand,
+  ListObjectsV2Command,
 } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
 
@@ -74,12 +75,16 @@ export async function writeJsonToS3(
   }
 }
 
-export async function listS3Buckets(s3: S3Client) {
+export async function listFilesInBucket(s3: S3Client, bucketName: string, prefix?: string) {
   try {
-    const command = new ListBucketsCommand({});
+    const command = new ListObjectsV2Command({
+      Bucket: bucketName,
+      Prefix: prefix, // optional: folder path or file prefix
+    });
+
     const response = await s3.send(command);
-    return response.Buckets;
+    return response.Contents;
   } catch (error) {
-    console.error("Error listing buckets:", error);
+    console.error("Error listing files in bucket:", error);
   }
 }

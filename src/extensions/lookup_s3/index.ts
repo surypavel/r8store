@@ -1,7 +1,7 @@
-import { createS3, listS3Buckets } from "./util";
+import { createS3, listFilesInBucket, writeJsonToS3 } from "./util";
 
 type ServerlessFnProps = {
-  settings: { endpoint: string, region: string },
+  settings: { endpoint: string, region: string, bucket: string },
   secrets: { accessKeyId: string; secretAccessKey: string }
   configure: boolean;
   annotation: { id: number };
@@ -51,8 +51,17 @@ export const rossum_hook_request_handler = async ({
   };
 
   const findDatasets = async () => {
-    return (await listS3Buckets(s3))?.map((d) => ({ dataset_name: d.Name })) ?? [];
+    return (await listFilesInBucket(s3, settings.bucket, ""))?.map((d) => ({ dataset_name: d.Key })) ?? [];
   };
+
+  if (variant == "create_master_data") {
+    await writeJsonToS3(
+      s3,
+      settings.bucket,
+      "countries",
+      [{ id: 1, name: "country 1" }, { id: 2, name: "country 2" }, { id: 3, name: "country 3" }]
+    )
+  }
 
   if (variant === "show_master_data") {
     if (form && form.dataset) {

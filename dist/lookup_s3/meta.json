@@ -17,6 +17,12 @@
       "payload": { "variant": "show_master_data" }
     },
     {
+      "name": "Command: Create master data in S3",
+      "description": "Creates dummy master data in S3.",
+      "type": "command",
+      "payload": { "variant": "create_master_data" }
+    },
+    {
       "name": "Lookup: S3",
       "description": "Does a lookup via S3",
       "type": "queue_lookup"
