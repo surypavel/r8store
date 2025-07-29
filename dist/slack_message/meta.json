@@ -1,5 +1,5 @@
 {
-    "events": ["invocation.integration"],
+    "events": ["invocation.interface"],
     "config": {
       "code_source": "code.cjs",
       "runtime": "nodejs22.x"
