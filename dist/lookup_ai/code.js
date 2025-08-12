@@ -20,6 +20,7 @@ exports.rossum_hook_request_handler = async ({
   base_url,
   rossum_authorization_token,
 }) => {
+  console.log("hey");
   if (configure === true) {
     return {
       intent: {
