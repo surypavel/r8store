@@ -1,0 +1,32 @@
+{
+  "events": ["invocation.interface"],
+  "config": {
+    "code_source": "code.py",
+    "runtime": "python3.12"
+  },
+  "description": "Does a lookup via MDH (Python)",
+  "name": "Lookup: Master Data Hub (Python)",
+  "type": "function",
+  "extension_image_url": "https://surypavel.github.io/r8store/static/lookup_mdh.png",
+  "store_description": "Does a lookup via MDH",
+  "hook_interfaces": [
+    {
+      "name": "Command: Show MDH master data",
+      "description": "Displays master data from MDH.",
+      "type": "command",
+      "payload": { "variant": "command_show_master_data" }
+    },
+    {
+      "name": "Lookup: Master Data Hub",
+      "description": "Does a lookup via MDH",
+      "type": "queue_lookup",
+      "payload": { "variant": "queue_lookup" }
+    },
+    {
+      "name": "Lookup: Master Data Hub (aggregate)",
+      "description": "Does a complex lookup via MDH",
+      "type": "queue_lookup",
+      "payload": { "variant": "queue_lookup_aggregate" }
+    }
+  ]
+}
