@@ -1,11 +1,31 @@
-import { sendSlackMessage } from "./util";
+import { WebClient } from "@slack/web-api";
 
 type ServerlessFnProps = {
   settings: Record<string, unknown>;
   secrets: Record<string, unknown>;
   configure: boolean;
   annotation: { id: number };
-  payloads: Array<{ message: string }>;
+  payloads: Array<{ message: string, blocks: string }>;
+};
+
+
+const options = {};
+const web = (token: string) => new WebClient(token, options);
+
+export const sendSlackMessage = async (token: string, message: string, blocks: string, channel: string) => {
+    return new Promise(async (resolve, reject) => {
+        const channelId = channel;
+        try {
+            const response = await web(token).chat.postMessage({
+                text: message,
+                channel: channelId,
+                blocks: JSON.parse(blocks)
+            });
+            return resolve(response);
+        } catch (error) {
+            return reject(error);
+        }
+    });
 };
 
 export const rossum_hook_request_handler = async ({
@@ -35,11 +55,20 @@ export const rossum_hook_request_handler = async ({
             elements: [{
               type: "FString",
               scope: `#/properties/message`,
+            }, {
+              type: "Control",
+              scope: `#/properties/blocks`,
+              "options": {
+                "multi": true
+               }
             }],
           },
           schema: {
             type: "object",
             properties: {
+              blocks: {
+                type: 'string'
+              },
               message: {
                 oneOf: [
                   {
@@ -61,21 +90,16 @@ export const rossum_hook_request_handler = async ({
       },
     };
   } else {
-    const sendMessage = async (message: string) => {
-      await sendSlackMessage(secretsToken, message, channelId);
-    };
+    const sendMessage = async (message: string, blocks: string) => sendSlackMessage(secretsToken, message, blocks, channelId);
 
     try {
-      await sendMessage(
-        `You are getting messages from annotation ${
-          annotation.id
-        }: \n\n ${payloads
-          .map((payload) => `* ${payload.message}`)
-          .join("\n ")}`
-      );
+      const responses = await Promise.all(payloads.map(payload => sendMessage(
+        payload.message,
+        payload.blocks
+      )))
 
       return {
-        messages: [{ type: "info", content: "Message was sent successfully." }],
+        messages: [{ type: "info", content: `Message was sent successfully: ${JSON.stringify(responses)}` }],
       };
     } catch (error) {
       return {
