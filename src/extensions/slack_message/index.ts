@@ -93,7 +93,7 @@ export const rossum_hook_request_handler = async ({
     const sendMessage = async (message: string, blocks: string) => sendSlackMessage(secretsToken, message, blocks, channelId);
 
     try {
-      await Promise.all(payloads.map(payload => sendMessage(
+      return await Promise.all(payloads.map(payload => sendMessage(
         payload.message,
         payload.blocks ?? "[]"
       ))).then(() => ({
