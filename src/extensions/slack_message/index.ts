@@ -99,7 +99,7 @@ export const rossum_hook_request_handler = async ({
       )))
 
       return {
-        messages: [{ type: "info", content: `Message was sent successfully: ${JSON.stringify(responses)}` }],
+        messages: [{ type: "success", content: `Message was sent successfully: ${JSON.stringify(responses)}` }],
       };
     } catch (error) {
       return {
