@@ -97,13 +97,14 @@ export const rossum_hook_request_handler = async ({
         payload.message,
         payload.blocks ?? "[]"
       ))).then(() => ({
-        messages: [{ type: "success", content: `Message was sent successfully.` }],
-      })).catch((e) => [{ type: "error", content: `Message was sent successfully: ${e.message}` }]);
+        messages: [{ id: 'all', type: "success", content: `Message was sent successfully.` }],
+      })).catch((e) => [{ id: 'all', type: "error", content: `Message was sent successfully: ${e.message}` }]);
 
     } catch (error) {
       return {
         messages: [
           {
+            id: 'all',
             type: "error",
             content:
               error && typeof error == "object" && "message" in error
