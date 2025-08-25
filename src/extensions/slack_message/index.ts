@@ -5,7 +5,7 @@ type ServerlessFnProps = {
   secrets: Record<string, unknown>;
   configure: boolean;
   annotation: { id: number };
-  payloads: Array<{ message: string, blocks: string }>;
+  payloads: Array<{ message: string, blocks?: string }>;
 };
 
 
@@ -95,7 +95,7 @@ export const rossum_hook_request_handler = async ({
     try {
       const responses = await Promise.all(payloads.map(payload => sendMessage(
         payload.message,
-        payload.blocks
+        payload.blocks ?? "[]"
       )))
 
       return {
