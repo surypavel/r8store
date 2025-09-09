@@ -21,12 +21,12 @@ def rossum_hook_request_handler(payload:dict):
         """Find data from the API"""
                         
         response = requests.post(
-            f"{base_url}/api/v1/annotations/search?page_size=100",
+            f"{base_url}/api/v1/annotations/search?page_size=100&sideload=documents",
             headers={
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {rossum_authorization_token}",
             },
-            json={{
+            json={
                 "query": {
                     "$and": [
                         {
@@ -50,7 +50,7 @@ def rossum_hook_request_handler(payload:dict):
                         }
                     ]
                 }
-            }}
+            }
         )
         return response.json()
         
@@ -61,6 +61,8 @@ def rossum_hook_request_handler(payload:dict):
         raise Exception(data["message"])
 
     for result in data["results"]:
+        result["document"] = next((doc for doc in data["document"] if doc['url'] == result["document"]), None)
+        result["document__original_file_name"] = result["document"]["original_file_name"]
         options.append({
             "value": result[payload["payload"]["value_key"]],
             "label": result[payload["payload"]["label_key"]],
