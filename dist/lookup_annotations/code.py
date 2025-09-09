@@ -17,7 +17,7 @@ def rossum_hook_request_handler(payload:dict):
             }
         }
     
-    def find_data(dataset: str, filters: List[Dict]) -> Dict:
+    def find_data() -> Dict:
         """Find data from the API"""
                         
         response = requests.post(
@@ -54,7 +54,7 @@ def rossum_hook_request_handler(payload:dict):
         )
         return response.json()
         
-    data = find_data(payload["payload"]["dataset"], payload["payload"].get("filters", []))
+    data = find_data()
     options = []
     
     if "message" in data:
