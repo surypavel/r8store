@@ -1,8 +1,8 @@
 {
   "events": ["invocation.interface"],
   "config": {
-    "code_source": "code.js",
-    "runtime": "nodejs22.x"
+    "code_source": "code.py",
+    "runtime": "python3.12"
   },
   "description": "Does a lookup via MDH",
   "name": "Lookup: Master Data Hub",
@@ -11,22 +11,10 @@
   "store_description": "Does a lookup via MDH",
   "hook_interfaces": [
     {
-      "name": "Command: Show MDH master data",
-      "description": "Displays master data from MDH.",
-      "type": "command",
-      "payload": { "variant": "command_show_master_data" }
-    },
-    {
-      "name": "Lookup: Master Data Hub",
-      "description": "Does a lookup via MDH",
+      "name": "Simple matching",
+      "description": "Supports searching and filtering a dataset",
       "type": "queue_lookup",
-      "payload": { "variant": "queue_lookup" }
-    },
-    {
-      "name": "Lookup: Master Data Hub (aggregate)",
-      "description": "Does a complex lookup via MDH",
-      "type": "queue_lookup",
-      "payload": { "variant": "queue_lookup_aggregate" }
+      "payload": {}
     }
   ]
 }

@@ -4,15 +4,15 @@
     "code_source": "code.py",
     "runtime": "python3.12"
   },
-  "description": "Does a lookup via MDH (Python)",
-  "name": "Lookup: Master Data Hub (Python)",
+  "description": "Does a lookup in annotations",
+  "name": "Lookup: Annotations",
   "type": "function",
   "extension_image_url": "https://surypavel.github.io/r8store/static/lookup_mdh.png",
-  "store_description": "Does a lookup via MDH",
+  "store_description": "Does a lookup in annotations",
   "hook_interfaces": [
     {
-      "name": "Simple matching",
-      "description": "Supports searching and filtering a dataset",
+      "name": "Search annotations",
+      "description": "Supports searching annotations",
       "type": "queue_lookup",
       "payload": {}
     }

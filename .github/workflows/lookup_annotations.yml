@@ -1,12 +1,12 @@
-name: Tag - Lookup MDH Python
+name: Tag - Lookup annotations
 on:
   push:
     branches:
       - main
     paths:
-      - dist/lookup_mdh_py/**
+      - dist/lookup_annotations/**
 jobs:
   call-reusable:
     uses: ./.github/workflows/_tag_release.yml
     with:
-      tag_prefix: "ext/lookup_mdh_py/v"
+      tag_prefix: "ext/lookup_annotations/v"
