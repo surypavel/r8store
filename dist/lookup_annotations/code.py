@@ -61,8 +61,8 @@ def rossum_hook_request_handler(payload:dict):
         raise Exception(data["message"])
 
     for result in data["results"]:
-        result["document"] = next((doc for doc in data["document"] if doc['url'] == result["document"]), None)
-        result["document__original_file_name"] = result["document"]["original_file_name"]
+        result["document_ref"] = next((doc for doc in data["documents"] if doc['url'] == result["document"]), None)
+        result["document__original_file_name"] = result["document_ref"]["original_file_name"]
         options.append({
             "value": result[payload["payload"]["value_key"]],
             "label": result[payload["payload"]["label_key"]],
