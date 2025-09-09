@@ -1,6 +1,5 @@
-import json
 import requests
-from typing import Dict, List
+from typing import Dict
 
 def rossum_hook_request_handler(payload:dict):
     configure = payload["configure"]
@@ -56,19 +55,16 @@ def rossum_hook_request_handler(payload:dict):
         
     data = find_data()
     options = []
-    
-    if "message" in data:
-        raise Exception(data["message"])
 
     for result in data["results"]:
-        result["document_ref"] = next((doc for doc in data["documents"] if doc['url'] == result["document"]), None)
+        result["document_ref"] = [doc for doc in data["documents"] if doc['url'] == result["document"]][0]
         result["document__original_file_name"] = result["document_ref"]["original_file_name"]
         options.append({
-            "value": result[payload["payload"]["value_key"]],
-            "label": result[payload["payload"]["label_key"]],
+            "value": str(result[payload["payload"]["value_key"]]),
+            "label": str(result[payload["payload"]["label_key"]]),
         })
     
     return {
         "options": options,
-        "value": data["results"][0][payload["payload"]["value_key"]] if data["results"] else None,
+        "value": str(data["results"][0][payload["payload"]["value_key"]]) if data["results"] else None,
     }
