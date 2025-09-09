@@ -47,7 +47,6 @@ def rossum_hook_request_handler(payload:dict):
             pipeline.append({"$match": {"$and": find_filters}})
 
         pipeline.append({"$limit": 100})
-
         
         response = requests.post(
             f"{url}/v1/data/aggregate",
@@ -63,7 +62,7 @@ def rossum_hook_request_handler(payload:dict):
         return response.json()
     
     # Set default URL
-    url = settings.get("url", "https://review-exe-sex-1856.review.r8.lol/svc/master-data-hub/api")
+    url = settings.get("url", "https://review-exe-sex-1865.review.r8.lol/svc/master-data-hub/api")
     
     data = find_data(payload["payload"]["dataset"], payload["payload"].get("filters", []))
     options = []
