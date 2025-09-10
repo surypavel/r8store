@@ -5,9 +5,13 @@ from typing import Dict, List
 def rossum_hook_request_handler(payload:dict):
     configure = payload["configure"]
     settings = payload["settings"]
-    secrets = payload["secrets"]
+    token = payload.get("secrets", {}).get("token", None)
+
 
     if configure:
+        if token == None:
+            return { "intent": { "error": { "message": "Token is missing." } } }
+
         return {
             "intent": {
                 "component": {
@@ -52,7 +56,7 @@ def rossum_hook_request_handler(payload:dict):
             f"{url}/v1/data/aggregate",
             headers={
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {secrets['token']}",
+                "Authorization": f"Bearer {token}",
             },
             json={
                 "aggregate": pipeline,
@@ -62,7 +66,7 @@ def rossum_hook_request_handler(payload:dict):
         return response.json()
     
     # Set default URL
-    url = settings.get("url", "https://review-exe-sex-1865.review.r8.lol/svc/master-data-hub/api")
+    url = settings.get("url", "https://review-exe-sex-1894.review.r8.lol/svc/master-data-hub/api")
 
     queries = payload["payload"].get("queries", [])
 
@@ -73,7 +77,7 @@ def rossum_hook_request_handler(payload:dict):
             data = find_data(payload["payload"]["dataset"], query["filters"])["results"]
         else:
             break
-    
+
     options = []
     
     for result in results:
