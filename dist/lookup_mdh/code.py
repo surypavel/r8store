@@ -69,12 +69,20 @@ def rossum_hook_request_handler(payload:dict):
     url = settings.get("url", "https://review-exe-sex-1894.review.r8.lol/svc/master-data-hub/api")
 
     queries = payload["payload"].get("queries", [])
+    
+    if len(queries) == 0:
+        queries.append({ "filters": [] })
 
     results = []
+    dataset = payload["payload"]["dataset"]
+    value_key = payload["payload"]["value_key"]   
+    label_key = payload["payload"]["label_key"]
 
     for query in queries:
+        print("query")
         if len(results) == 0:
-            data = find_data(payload["payload"]["dataset"], query["filters"])["results"]
+            data = find_data(dataset, query["filters"])
+            results = data["results"]
         else:
             break
 
@@ -82,11 +90,11 @@ def rossum_hook_request_handler(payload:dict):
     
     for result in results:
         options.append({
-            "value": result[payload["payload"]["value_key"]],
-            "label": result[payload["payload"]["label_key"]],
+            "value": result[value_key],
+            "label": result[label_key],
         })
     
     return {
         "options": options,
-        "value": data["results"][0][payload["payload"]["value_key"]] if data["results"] else None,
+        "value": options[0]["value"] if options else None,
     }
