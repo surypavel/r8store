@@ -5,12 +5,12 @@ from typing import Dict, List
 def rossum_hook_request_handler(payload:dict):
     configure = payload["configure"]
     settings = payload["settings"]
-    token = payload.get("secrets", {}).get("token", None)
+    token = payload["rossum_authorization_token"]
 
 
     if configure:
         if token == None:
-            return { "intent": { "error": { "message": "Token is missing." } } }
+            return { "intent": { "error": { "message": "Token is missing. Please set a token owner of this hook." } } }
 
         return {
             "intent": {
@@ -57,6 +57,7 @@ def rossum_hook_request_handler(payload:dict):
             headers={
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {token}",
+                "X-Rossum-Dev": "true",
             },
             json={
                 "aggregate": pipeline,
@@ -66,7 +67,7 @@ def rossum_hook_request_handler(payload:dict):
         return response.json()
     
     # Set default URL
-    url = settings.get("url", "https://review-exe-sex-1894.review.r8.lol/svc/master-data-hub/api")
+    url = settings.get("url", "https://elis.master.r8.lol/svc/master-data-hub/api")
 
     queries = payload["payload"].get("queries", [])
     
