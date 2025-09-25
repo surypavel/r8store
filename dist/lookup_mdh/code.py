@@ -44,6 +44,7 @@ def rossum_hook_request_handler(payload:dict):
                 find_filters.append({column_name: {operator: filter_value}})
                 
         pipeline: list[dict] = []
+
         if search_filters:
             pipeline.append({"$search": {"compound": {"must": search_filters}}})
 
@@ -104,8 +105,8 @@ def rossum_hook_request_handler(payload:dict):
     
     for result in results:
         options.append({
-            "value": result[value_key],
-            "label": result[label_key],
+            "value": str(result[value_key]),
+            "label": str(result[label_key]),
         })
     
     return {
