@@ -21,7 +21,7 @@ def rossum_hook_request_handler(payload:dict):
             }
         }
     
-    def find_data(dataset: str, filters: List[Dict]) -> Dict:
+    def find_data(dataset: str, sort: Dict, limit: int, filters: List[Dict]) -> Dict:
         """Find data from the API"""
         find_filters = []
         search_filters = []
@@ -50,7 +50,18 @@ def rossum_hook_request_handler(payload:dict):
         if find_filters:
             pipeline.append({"$match": {"$and": find_filters}})
 
-        pipeline.append({"$limit": 100})
+        if sort["sort_key"] == "__metaSearchKey" and search_filters:
+            pipeline.append({
+                "$sort": { "score": { "$meta": "searchScore" }}
+            })
+            
+        elif sort["sort_key"] != None:
+            pipeline.append({ 
+                "$sort": { sort["sort_key"]: -1 if sort["desc"] else 1 } 
+            })
+
+        pipeline.append({"$limit": limit})
+        
         
         response = requests.post(
             f"{url}/v1/data/aggregate",
@@ -70,7 +81,9 @@ def rossum_hook_request_handler(payload:dict):
     url = settings.get("url", "https://elis.master.r8.lol/svc/master-data-hub/api")
 
     queries = payload["payload"].get("queries", [])
-    
+    sort = payload["payload"].get("sort", { "sort_key": "", "desc": False })
+    limit = min(int(payload["payload"].get("limit", 100)), 100)
+
     if len(queries) == 0:
         queries.append({ "filters": [] })
 
@@ -82,7 +95,7 @@ def rossum_hook_request_handler(payload:dict):
     for query in queries:
         print("query")
         if len(results) == 0:
-            data = find_data(dataset, query["filters"])
+            data = find_data(dataset, sort, limit, query["filters"])
             results = data["results"]
         else:
             break
