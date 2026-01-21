@@ -1,0 +1,20 @@
+{
+  "events": ["invocation.interface"],
+  "config": {
+    "code_source": "code.py",
+    "runtime": "python3.12"
+  },
+  "description": "Memoize a field using master data hub.",
+  "name": "Memoize: Master Data Hub",
+  "type": "function",
+  "extension_image_url": "https://surypavel.github.io/r8store/static/memo_mdh.png",
+  "store_description": "Memoize a field using master data hub.",
+  "hook_interfaces": [
+    {
+      "name": "Master Data Hub",
+      "description": "Memoize a field using master data hub.",
+      "type": "queue_memory",
+      "payload": {}
+    }
+  ]
+}
