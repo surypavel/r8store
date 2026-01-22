@@ -1,18 +1,27 @@
+# flake8: noqa
+import json
+import logging
+from datetime import datetime, timezone
 from typing import Any
 
 import requests
 
-WEBHOOK_URL = "https://webhook.site/fa24415c-ac46-4217-a223-0a4b15e84210"
+log = logging.getLogger(__name__)
+
+DEFAULT_TIMEOUT = 30
+DEFAULT_MATCH_COUNT = 3
+EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+HUGGINGFACE_API_URL = f"https://api-inference.huggingface.co/pipeline/feature-extraction/{EMBEDDING_MODEL}"
 
 
 def rossum_hook_request_handler(payload: dict) -> dict[str, Any]:
     """
-    Testing memory provider for development/debugging.
+    Supabase/HuggingFace RAG memory provider for memory fields.
 
     Modes:
-    - configure: Returns empty intent
-    - learn: POSTs value to webhook.site
-    - retrieve: Always returns {"value": "Loaded from memory", "found": True}
+    - configure: Returns configuration form
+    - learn: Inserts a document with embedding to Supabase
+    - retrieve: Searches documents by semantic similarity
 
     Payload structure:
     {
@@ -24,34 +33,231 @@ def rossum_hook_request_handler(payload: dict) -> dict[str, Any]:
             "value": "...",  # only for learn
             "struct": {...},  # only for learn
         },
+        "settings": {
+            "supabase_url": "https://xxx.supabase.co",
+            "table_name": "documents",  # optional, defaults to "documents"
+            "match_function": "match_documents",  # optional, defaults to "match_documents"
+            "match_count": 3,  # optional, defaults to 3
+        },
+        "secrets": {
+            "supabase_key": "...",
+            "huggingface_token": "...",
+        },
         "variant": "retrieve" | "learn" | "configure",
     }
     """
     variant = payload.get("variant", "retrieve")
     inner_payload = payload.get("payload", {})
+    settings = payload.get("settings", {})
+    secrets = payload.get("secrets", {})
     mode = inner_payload.get("mode", variant)
 
     if mode == "configure":
-        return {"intent": {}}
+        return {
+            "intent": {
+                "settings_form": {
+                    "uiSchema": {
+                        "type": "VerticalLayout",
+                        "elements": [
+                            {"type": "Control", "scope": "#/properties/supabase_url"},
+                            {"type": "Control", "scope": "#/properties/table_name"},
+                            {"type": "Control", "scope": "#/properties/match_function"},
+                            {"type": "Control", "scope": "#/properties/match_count"},
+                        ],
+                    },
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "supabase_url": {"type": "string"},
+                            "table_name": {"type": "string"},
+                            "match_function": {"type": "string"},
+                            "match_count": {"type": "integer"},
+                        },
+                    },
+                },
+                "secrets_form": {
+                    "uiSchema": {
+                        "type": "VerticalLayout",
+                        "elements": [
+                            {"type": "Control", "scope": "#/properties/supabase_key"},
+                            {"type": "Control", "scope": "#/properties/huggingface_token"},
+                        ],
+                    },
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "supabase_key": {"type": "string"},
+                            "huggingface_token": {"type": "string"},
+                        },
+                    },
+                },
+            }
+        }
+
+    supabase_url = settings.get("supabase_url")
+    supabase_key = secrets.get("supabase_key")
+    huggingface_token = secrets.get("huggingface_token")
+    table_name = settings.get("table_name", "documents")
+    match_function = settings.get("match_function", "match_documents")
+    match_count = settings.get("match_count", DEFAULT_MATCH_COUNT)
+    memory_key = inner_payload.get("key")
+
+    if not supabase_url or not supabase_key:
+        log.warning("Supabase RAG memory: supabase_url or supabase_key not specified")
+        return {"value": None, "struct": None, "found": False}
+
+    if not huggingface_token:
+        log.warning("Supabase RAG memory: huggingface_token not specified")
+        return {"value": None, "struct": None, "found": False}
+
+    if not memory_key:
+        log.warning("Supabase RAG memory: key not specified")
+        return {"value": None, "struct": None, "found": False}
 
     if mode == "learn":
-        try:
-            requests.post(
-                WEBHOOK_URL,
-                json={
-                    "mode": "learn",
-                    "key": inner_payload.get("key"),
-                    "value": inner_payload.get("value"),
-                    "struct": inner_payload.get("struct"),
-                },
-                timeout=10,
-            )
-        except Exception:
-            pass
+        return _learn(
+            supabase_url=supabase_url,
+            supabase_key=supabase_key,
+            huggingface_token=huggingface_token,
+            table_name=table_name,
+            memory_key=memory_key,
+            value=inner_payload.get("value"),
+            struct=inner_payload.get("struct"),
+        )
+
+    return _retrieve(
+        supabase_url=supabase_url,
+        supabase_key=supabase_key,
+        huggingface_token=huggingface_token,
+        match_function=match_function,
+        match_count=match_count,
+        memory_key=memory_key,
+    )
+
+
+def _get_embedding(text: str, huggingface_token: str) -> list[float] | None:
+    """Get embedding vector from HuggingFace API."""
+    try:
+        response = requests.post(
+            HUGGINGFACE_API_URL,
+            headers={
+                "Authorization": f"Bearer {huggingface_token}",
+                "Content-Type": "application/json",
+            },
+            json={"inputs": text},
+            timeout=DEFAULT_TIMEOUT,
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException:
+        log.exception("HuggingFace embedding request failed")
+        return None
+
+
+def _retrieve(
+    supabase_url: str,
+    supabase_key: str,
+    huggingface_token: str,
+    match_function: str,
+    match_count: int,
+    memory_key: str,
+) -> dict[str, Any]:
+    """Search documents by semantic similarity using Supabase vector search."""
+    try:
+        embedding = _get_embedding(memory_key, huggingface_token)
+        if embedding is None:
+            return {"value": None, "struct": None, "found": False}
+
+        response = requests.post(
+            f"{supabase_url}/rest/v1/rpc/{match_function}",
+            headers={
+                "apikey": supabase_key,
+                "Authorization": f"Bearer {supabase_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "query_embedding": embedding,
+                "match_count": match_count,
+            },
+            timeout=DEFAULT_TIMEOUT,
+        )
+
+        if response.status_code == 404:
+            return {"value": None, "struct": None, "found": False}
+
+        response.raise_for_status()
+        results = response.json()
+
+        if not results:
+            return {"value": None, "struct": None, "found": False}
+
+        top_result = results[0]
+        value = top_result.get("content")
+        struct = {
+            "similarity": top_result.get("similarity"),
+        }
+
+        return {
+            "value": value,
+            "struct": struct,
+            "found": True,
+        }
+
+    except requests.exceptions.RequestException:
+        log.exception(
+            "Supabase RAG memory retrieve failed",
+            extra={"memory_key": memory_key},
+        )
+        return {"value": None, "struct": None, "found": False}
+
+
+def _learn(
+    supabase_url: str,
+    supabase_key: str,
+    huggingface_token: str,
+    table_name: str,
+    memory_key: str,
+    value: Any,
+    struct: dict | None,
+) -> dict[str, Any]:
+    """Store document with embedding to Supabase."""
+    try:
+        content = value if value else memory_key
+        embedding = _get_embedding(content, huggingface_token)
+        if embedding is None:
+            return {}
+
+        record = {
+            "memory_key": memory_key,
+            "content": content,
+            "embedding": embedding,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+        if struct:
+            record["metadata"] = json.dumps(struct)
+
+        response = requests.post(
+            f"{supabase_url}/rest/v1/{table_name}",
+            headers={
+                "apikey": supabase_key,
+                "Authorization": f"Bearer {supabase_key}",
+                "Content-Type": "application/json",
+                "Prefer": "return=minimal",
+            },
+            json=record,
+            timeout=DEFAULT_TIMEOUT,
+        )
+
+        response.raise_for_status()
+        log.info(
+            "Supabase RAG memory learn successful",
+            extra={"table_name": table_name, "memory_key": memory_key},
+        )
         return {}
 
-    return {
-        "value": "Loaded from memory",
-        "struct": None,
-        "found": True,
-    }
+    except requests.exceptions.RequestException:
+        log.exception(
+            "Supabase RAG memory learn failed",
+            extra={"table_name": table_name, "memory_key": memory_key},
+        )
+        return {}
