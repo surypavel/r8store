@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 DEFAULT_TIMEOUT = 30
 DEFAULT_MATCH_COUNT = 3
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-HUGGINGFACE_API_URL = f"https://api-inference.huggingface.co/pipeline/feature-extraction/{EMBEDDING_MODEL}"
+HUGGINGFACE_API_URL = f"https://api-inference.huggingface.co/models/{EMBEDDING_MODEL}"
 
 
 def rossum_hook_request_handler(payload: dict) -> dict[str, Any]:
