@@ -1,0 +1,20 @@
+{
+  "events": ["invocation.interface"],
+  "config": {
+    "code_source": "code.py",
+    "runtime": "python3.12"
+  },
+  "description": "Embed the value using huggingface into supabase.",
+  "name": "Memoize: Embedding Store",
+  "type": "function",
+  "extension_image_url": "https://surypavel.github.io/r8store/static/memo_rag.png",
+  "store_description": "Embed the value using huggingface into supabase.",
+  "hook_interfaces": [
+    {
+      "name": "Embedding Store",
+      "description": "Embed the value using huggingface into supabase.",
+      "type": "queue_memory",
+      "payload": {}
+    }
+  ]
+}
