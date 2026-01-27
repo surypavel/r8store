@@ -236,9 +236,9 @@ def _learn(
 
         # Store the value as content to be returned on match
         record = {
-            "content": value if value else memory_key,
+            "content": value,
             "embedding": embedding,
-            "learned_value": value,
+            "learned_value": memory_key,
         }
 
         response = requests.post(
