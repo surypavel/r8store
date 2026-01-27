@@ -238,6 +238,7 @@ def _learn(
         record = {
             "content": value if value else memory_key,
             "embedding": embedding,
+            "learned_value": value,
         }
 
         response = requests.post(
