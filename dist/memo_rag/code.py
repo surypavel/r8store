@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 DEFAULT_TIMEOUT = 30
 DEFAULT_MATCH_COUNT = 3
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-HUGGINGFACE_API_URL = f"https://api-inference.huggingface.co/models/{EMBEDDING_MODEL}"
+HUGGINGFACE_API_URL = f"https://router.huggingface.co/hf-inference/models/{EMBEDDING_MODEL}/pipeline/feature-extraction"
 
 
 def rossum_hook_request_handler(payload: dict) -> dict[str, Any]:
@@ -148,7 +148,11 @@ def _get_embedding(text: str, huggingface_token: str) -> list[float] | None:
             timeout=DEFAULT_TIMEOUT,
         )
         response.raise_for_status()
-        return response.json()
+        embedding = response.json()
+        # HuggingFace may return nested array [[0.1, 0.2, ...]] - unwrap if needed
+        if embedding and isinstance(embedding, list) and isinstance(embedding[0], list):
+            embedding = embedding[0]
+        return embedding
     except requests.exceptions.RequestException:
         log.exception("HuggingFace embedding request failed")
         return None
@@ -187,6 +191,9 @@ def _retrieve(
 
         response.raise_for_status()
         results = response.json()
+        log.info(
+            f"Supabase RAG memory retrieve: key={memory_key}, count={len(results) if results else 0}, results={results}"
+        )
 
         if not results:
             return {"value": None, "struct": None, "found": False}
@@ -222,19 +229,16 @@ def _learn(
 ) -> dict[str, Any]:
     """Store document with embedding to Supabase."""
     try:
-        content = value if value else memory_key
-        embedding = _get_embedding(content, huggingface_token)
+        # Embed the key (index formula) for semantic matching
+        embedding = _get_embedding(memory_key, huggingface_token)
         if embedding is None:
             return {}
 
+        # Store the value as content to be returned on match
         record = {
-            "memory_key": memory_key,
-            "content": content,
+            "content": value if value else memory_key,
             "embedding": embedding,
-            "created_at": datetime.now(timezone.utc).isoformat(),
         }
-        if struct:
-            record["metadata"] = json.dumps(struct)
 
         response = requests.post(
             f"{supabase_url}/rest/v1/{table_name}",
@@ -248,6 +252,16 @@ def _learn(
             timeout=DEFAULT_TIMEOUT,
         )
 
+        if not response.ok:
+            log.error(
+                "Supabase RAG memory learn failed",
+                extra={
+                    "table_name": table_name,
+                    "memory_key": memory_key,
+                    "status_code": response.status_code,
+                    "response_body": response.text,
+                },
+            )
         response.raise_for_status()
         log.info(
             "Supabase RAG memory learn successful",
