@@ -15,6 +15,12 @@
       "description": "Supports searching and filtering a dataset",
       "type": "queue_lookup",
       "payload": {}
+    },
+    {
+      "name": "Complex matching",
+      "description": "Supports searching and filtering a dataset",
+      "type": "queue_lookup_aggregate",
+      "payload": {}
     }
   ]
 }
