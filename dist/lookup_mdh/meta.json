@@ -14,13 +14,17 @@
       "name": "Simple matching",
       "description": "Supports searching and filtering a dataset",
       "type": "queue_lookup",
-      "payload": {}
+      "payload": {
+          "variant": "queue_lookup"
+      }
     },
     {
       "name": "Complex matching",
       "description": "Supports searching and filtering a dataset",
-      "type": "queue_lookup_aggregate",
-      "payload": {}
+      "type": "queue_lookup",
+      "payload": {
+        "variant": "queue_lookup_aggregate"
+      }
     }
   ]
 }
