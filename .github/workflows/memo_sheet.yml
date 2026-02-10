@@ -1,0 +1,12 @@
+name: Tag - Memo sheet
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - dist/memo_sheet/**
+jobs:
+  call-reusable:
+    uses: ./.github/workflows/_tag_release.yml
+    with:
+      tag_prefix: "ext/memo_sheet/v"

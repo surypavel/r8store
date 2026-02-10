@@ -1,0 +1,20 @@
+{
+  "events": ["invocation.interface"],
+  "config": {
+    "code_source": "code.py",
+    "runtime": "python3.12"
+  },
+  "description": "Memorize the value into a google sheet.",
+  "name": "Memoize: Google Sheet",
+  "type": "function",
+  "extension_image_url": "https://surypavel.github.io/r8store/static/memo_sheet.png",
+  "store_description": "Memorize the value into a google sheet.",
+  "hook_interfaces": [
+    {
+      "name": "Google Sheet",
+      "description": "Memorize the value into a google sheet.",
+      "type": "queue_memory",
+      "payload": {}
+    }
+  ]
+}
