@@ -202,6 +202,7 @@ def _retrieve(
         value = top_result.get("content")
         struct = {
             "similarity": top_result.get("similarity"),
+            "learned_value": top_result.get("learned_value"),
         }
 
         return {
