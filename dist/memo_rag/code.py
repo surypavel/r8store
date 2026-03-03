@@ -63,6 +63,7 @@ def rossum_hook_request_handler(payload: dict) -> dict[str, Any]:
                             {"type": "Control", "scope": "#/properties/table_name"},
                             {"type": "Control", "scope": "#/properties/match_function"},
                             {"type": "Control", "scope": "#/properties/match_count"},
+                            {"type": "Control", "scope": "#/properties/similarity_threshold"},
                         ],
                     },
                     "schema": {
@@ -72,6 +73,7 @@ def rossum_hook_request_handler(payload: dict) -> dict[str, Any]:
                             "table_name": {"type": "string"},
                             "match_function": {"type": "string"},
                             "match_count": {"type": "integer"},
+                            "similarity_threshold": {"type": "number"},
                         },
                     },
                 },
@@ -100,6 +102,7 @@ def rossum_hook_request_handler(payload: dict) -> dict[str, Any]:
     table_name = settings.get("table_name", "documents")
     match_function = settings.get("match_function", "match_documents")
     match_count = settings.get("match_count", DEFAULT_MATCH_COUNT)
+    similarity_threshold = settings.get("similarity_threshold", 0)
     memory_key = inner_payload.get("key")
 
     if not supabase_url or not supabase_key:
@@ -132,6 +135,7 @@ def rossum_hook_request_handler(payload: dict) -> dict[str, Any]:
         match_function=match_function,
         match_count=match_count,
         memory_key=memory_key,
+        similarity_threshold=similarity_threshold,
     )
 
 
@@ -165,6 +169,7 @@ def _retrieve(
     match_function: str,
     match_count: int,
     memory_key: str,
+    similarity_threshold: float = 0,
 ) -> dict[str, Any]:
     """Search documents by semantic similarity using Supabase vector search."""
     try:
@@ -204,6 +209,9 @@ def _retrieve(
             "similarity": top_result.get("similarity"),
             "learned_value": top_result.get("learned_value"),
         }
+
+        if (top_result.get("similarity") or 0) < similarity_threshold:
+            return {"value": None, "struct": struct, "found": False}
 
         return {
             "value": value,
